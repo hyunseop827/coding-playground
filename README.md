@@ -1,10 +1,9 @@
-#playground
+# What is this?
 
-I think I've been getting so bad at code. so what I try to do in this repository is...  
-actually writing codes with myself.
+I've gotten pretty rusty at coding, so I'm getting back to writing code on my own.
 
-just anything that comes in my mind. I will write them.
+I'll build whatever comes to mind.
 
-will see how it goes...
+Trying to code for at least 30 minutes a day to shake off the rust.
 
-
+Let's see how it goes...
