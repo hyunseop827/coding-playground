@@ -13,6 +13,12 @@ typedef enum {
     STACK_TYPE_ERR
 } StackResult;
 
+typedef enum {
+    INT_INPUT_OK,
+    INT_INPUT_END,
+    INT_INPUT_ERROR
+} InputResult;
+
 // define the stack by using struct
 typedef struct int_stack {
     int pos;
@@ -20,32 +26,68 @@ typedef struct int_stack {
 } Stack;
 
 // functions
-void stack_init(Stack *stack);
+StackResult stack_init(Stack *stack);
 void print_stack(Stack *stack);
 
-bool push(Stack *stack);
-bool pop(Stack *stack, int *value);
+StackResult push(Stack *stack, int* value);
+StackResult pop(Stack *stack, int *value);
+
+// functions for scanf
+InputResult input_int(int *out_value);
 
 int main() {
 
     // integer stack
     Stack stack;
-    stack_init(&stack);
+    if(stack_init(&stack) != STACK_OK){
+        printf("stack initalise failed\n");
+        printf("program shut down\n");
+        return 0;
+    }
 
-    print_stack(&stack);
+    int value, option, result;
+    option = 100;
+    
+    while(option != 0) {
+        printf("\noption list\n");
+        printf("1 - push\n");
+        printf("2 - pop\n");
+        printf("3 - print stack\n");
+        printf("0 - exit\n----------------\n");
 
-    push(&stack);
+        switch (option) {
 
-    print_stack(&stack);
+            case 1:
+                printf("value? :");
+                scanf("%d", &value);
+                if(push(&stack, &value) != STACK_OK){
+                    printf("stack is full\n");   
+                    break;
+                }
+                break;
 
-    int value;
+            case 2:
+                if(pop(&stack, &value) != STACK_OK){
+                    printf("stack is empty\n");
+                    break;
+                }
 
-    if(pop(&stack, &value)){
+                printf("value poped out: %d\n", value);
+                break;
 
-    print_stack(&stack);
-    printf("%d\n", value);
-
-} 
+            case 3:
+                print_stack(&stack);
+                break;
+            case 0:
+                free(stack.data);
+                break;
+                
+            default:
+                printf("wrong option\nplease try again...\n");
+                break;
+        }
+    }
+}
 
 /**
  * @brief initailising stack
@@ -60,12 +102,10 @@ StackResult stack_init(Stack *stack) {
     stack->data = (int*)malloc(sizeof(int) * MAX_SIZE);
 
     if(stack->data == NULL){
-        printf("Intialisation failed\n");
-        return STACK_OK;
+        return STACK_INIT_FAIL;
     }
     else{
-        printf("Intialisation successed\n");
-        return STACK_INIT_FAIL;
+        return STACK_OK;
     }
 }
 
@@ -79,14 +119,14 @@ StackResult stack_init(Stack *stack) {
 void print_stack(Stack *stack) {
     
     if(stack->pos <= -1){
-        return STACK_EMPTY;
+        return;
     }
 
     for(int i = stack->pos; i >= 0; i--){
         printf("%2d\n", stack->data[i]);
         printf("----\n");
     }
-    return STACK_OK;
+    return;
 }
 
 /** 
@@ -103,16 +143,22 @@ StackResult push(Stack *stack, int* value){
         return STACK_FULL;
     }
     else{
-
-        stack->pos++;
-        stack->data[stack->pos] = value;
+        stack->data[++(stack->pos)] = *value;
         return STACK_OK;
     }
 }
 
-bool pop(Stack *stack, int *value){
+/**
+ * @breif pop
+ *
+ * @param *stack stack
+ * @param *value return pop
+ *
+ */
+StackResult pop(Stack *stack, int *value){
+
     if(stack->pos <= -1) {
-        return STACK_FULL;
+        return STACK_EMPTY;
     }
     else{
 
@@ -121,5 +167,23 @@ bool pop(Stack *stack, int *value){
 
         return STACK_OK;
     }
+}
+
+InputResult input_int(int *value){
+    int result = scanf("%d", value);
+
+    if(result == 1){
+        return INT_INPUT_OK;
+    }
+
+    if (result == EOF){
+        return INT_INPUT_END;
+    }
+
+    int ch;
+
+    while((ch = getchar()) != '\n' && ch != EOF);
+   
+    return INT_INPUT_ERROR;
 }
 
