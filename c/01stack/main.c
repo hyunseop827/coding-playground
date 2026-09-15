@@ -39,7 +39,7 @@ int main() {
         
         // if EOF, shut down
         if (menu_result == INT_INPUT_END) {
-            free(stack.data);
+            stack_destroy(&stack);
             return 0;
         }
 
@@ -56,7 +56,7 @@ int main() {
                 InputResult int_result = input_int(&value);
 
                 if(int_result == INT_INPUT_END){
-                    free(stack.data);
+                    stack_destroy(&stack);
                     return 0;
                 }
 
@@ -65,13 +65,13 @@ int main() {
                     break;
                 }                
 
-                if(push(&stack, value) != STACK_OK) {
+                if(stack_push(&stack, value) != STACK_OK) {
                     printf("stack is full\n");
                 }
 
                 break;
             case 2:
-                if(pop(&stack, &value) != STACK_OK){
+                if(stack_pop(&stack, &value) != STACK_OK){
                     printf("stack is empty\n");
                     break;
                 }
@@ -84,7 +84,7 @@ int main() {
                 break;
 
             case 4:
-                if(max(&stack, &value) != STACK_OK){
+                if(stack_max(&stack, &value) != STACK_OK){
                     printf("stack is empty\n");
                     break;
                 }
@@ -93,7 +93,7 @@ int main() {
                 break;
 
             case 5:
-                if(min(&stack, &value) != STACK_OK){
+                if(stack_min(&stack, &value) != STACK_OK){
                     printf("stack is empty\n");
                     break;
                 }
@@ -102,7 +102,7 @@ int main() {
                 break;
                 
             case 6:
-                if(peek(&stack, &value) != STACK_OK){
+                if(stack_peek(&stack, &value) != STACK_OK){
                     printf("stack is empty\n");
                     break;
                 }
@@ -110,7 +110,7 @@ int main() {
                 break;
 
             case 0:
-                free(stack.data);
+                stack_destroy(&stack);
                 break;
                 
                 default:

@@ -17,10 +17,11 @@ typedef struct int_stack {
 
 StackResult stack_init(Stack *stack);
 void print_stack(Stack *stack);
-StackResult push(Stack *stack, int value);
-StackResult pop(Stack *stack, int *value);
-StackResult max(Stack *stack, int *value);
-StackResult min(Stack *stack, int *value);
-StackResult peek(Stack *stack, int *value);
+StackResult stack_push(Stack *stack, int value);
+StackResult stack_pop(Stack *stack, int *value);
+StackResult stack_max(Stack *stack, int *value);
+StackResult stack_min(Stack *stack, int *value);
+StackResult stack_peek(Stack *stack, int *value);
+void stack_destroy(Stack *stack);
 
 #endif

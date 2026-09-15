@@ -28,7 +28,7 @@ void print_stack(Stack *stack) {
     return;
 }
 
-StackResult push(Stack *stack, int value){
+StackResult stack_push(Stack *stack, int value){
 
     if(stack->pos >= STACK_MAX_SIZE - 1) {
         return STACK_FULL;
@@ -39,7 +39,7 @@ StackResult push(Stack *stack, int value){
     }
 }
 
-StackResult pop(Stack *stack, int *value){
+StackResult stack_pop(Stack *stack, int *value){
 
     if(stack->pos <= -1) {
         return STACK_EMPTY;
@@ -53,7 +53,7 @@ StackResult pop(Stack *stack, int *value){
     }
 }
 
-StackResult max(Stack *stack, int *value) {
+StackResult stack_max(Stack *stack, int *value) {
     
     if(stack->pos <= -1) {
         return STACK_EMPTY;
@@ -74,8 +74,7 @@ StackResult max(Stack *stack, int *value) {
     }
 }
 
-StackResult min(Stack *stack, int *value) {
-
+StackResult stack_min(Stack *stack, int *value) {
 
     if(stack->pos <= -1) return STACK_EMPTY;
 
@@ -94,7 +93,7 @@ StackResult min(Stack *stack, int *value) {
     }
 }
 
-StackResult peek(Stack *stack, int *value) {
+StackResult stack_peek(Stack *stack, int *value) {
 
     if(stack->pos <= -1) return STACK_EMPTY;
 
@@ -103,5 +102,13 @@ StackResult peek(Stack *stack, int *value) {
         
         return STACK_OK;
     }
+}
+
+void stack_destroy(Stack *stack) {
+    
+    stack->pos = -1;
+    free(stack->data);
+    stack->data = NULL;
+
 }
 
