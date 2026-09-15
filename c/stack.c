@@ -29,43 +29,73 @@ typedef struct int_stack {
 StackResult stack_init(Stack *stack);
 void print_stack(Stack *stack);
 
-StackResult push(Stack *stack, int* value);
+StackResult push(Stack *stack, int value);
 StackResult pop(Stack *stack, int *value);
+StackResult max(Stack *stack, int *value);
+StackResult min(Stack *stack, int *value);
+StackResult peek(Stack *stack, int *value);
 
-// functions for scanf
 InputResult input_int(int *out_value);
 
 int main() {
 
-    // integer stack
+    int value;
+    int option = 100;
     Stack stack;
+
     if(stack_init(&stack) != STACK_OK){
         printf("stack initalise failed\n");
         printf("program shut down\n");
         return 0;
     }
-
-    int value, option, result;
-    option = 100;
-    
+   
+    // while loop for selection
     while(option != 0) {
+
         printf("\noption list\n");
         printf("1 - push\n");
         printf("2 - pop\n");
         printf("3 - print stack\n");
+        printf("4 - find max\n");
+        printf("5 - find min\n");
+        printf("6 - find peek\n");
         printf("0 - exit\n----------------\n");
+
+        InputResult menu_result = input_int(&option);
+        
+        // if EOF, shut down
+        if (menu_result == INT_INPUT_END) {
+            free(stack.data);
+            return 0;
+        }
+
+        // if error occurs, go to while starts.
+        if (menu_result == INT_INPUT_ERROR) {
+            printf("enter integer only.\n");
+            continue;
+        }
 
         switch (option) {
 
             case 1:
                 printf("value? :");
-                scanf("%d", &value);
-                if(push(&stack, &value) != STACK_OK){
-                    printf("stack is full\n");   
-                    break;
-                }
-                break;
+                InputResult int_result = input_int(&value);
 
+                if(int_result == INT_INPUT_END){
+                    free(stack.data);
+                    return 0;
+                }
+
+                if(int_result == INT_INPUT_ERROR){
+                    printf("wrong input type... enter integer please.\n");
+                    break;
+                }                
+
+                if(push(&stack, value) != STACK_OK) {
+                    printf("stack is full\n");
+                }
+
+                break;
             case 2:
                 if(pop(&stack, &value) != STACK_OK){
                     printf("stack is empty\n");
@@ -78,14 +108,41 @@ int main() {
             case 3:
                 print_stack(&stack);
                 break;
+
+            case 4:
+                if(max(&stack, &value) != STACK_OK){
+                    printf("stack is empty\n");
+                    break;
+                }
+
+                printf("max in stack: %d\n", value);
+                break;
+
+            case 5:
+                if(min(&stack, &value) != STACK_OK){
+                    printf("stack is empty\n");
+                    break;
+                }
+
+                printf("min in stack: %d\n", value);
+                break;
+                
+            case 6:
+                if(peek(&stack, &value) != STACK_OK){
+                    printf("stack is empty\n");
+                    break;
+                }
+                printf("peek: %d\n", value);
+                break;
+
             case 0:
                 free(stack.data);
                 break;
                 
-            default:
-                printf("wrong option\nplease try again...\n");
-                break;
-        }
+                default:
+                    printf("wrong option\nplease try again...\n");
+                    break;
+             }
     }
 }
 
@@ -137,13 +194,13 @@ void print_stack(Stack *stack) {
  *
  * @return STACK_OK, STACK_FULL
  */
-StackResult push(Stack *stack, int* value){
+StackResult push(Stack *stack, int value){
 
     if(stack->pos >= MAX_SIZE - 1) {
         return STACK_FULL;
     }
     else{
-        stack->data[++(stack->pos)] = *value;
+        stack->data[++(stack->pos)] = value;
         return STACK_OK;
     }
 }
@@ -185,5 +242,57 @@ InputResult input_int(int *value){
     while((ch = getchar()) != '\n' && ch != EOF);
    
     return INT_INPUT_ERROR;
+}
+
+StackResult max(Stack *stack, int *value) {
+    
+    if(stack->pos <= -1) {
+        return STACK_EMPTY;
+    }
+
+    else{
+        
+        int max = stack->data[stack->pos];
+        for(int i = 0; i < stack->pos; i++){
+            if(max <= stack->data[i]){
+                max = stack->data[i];
+            }
+        }
+
+        *value = max;
+
+        return STACK_OK;
+    }
+}
+
+StackResult min(Stack *stack, int *value) {
+
+
+    if(stack->pos <= -1) return STACK_EMPTY;
+
+    else {
+
+        int min = stack->data[stack->pos];
+        for(int i = 0; i < stack->pos; i++) {
+            if (min >= stack->data[i]) {
+                min = stack->data[i];
+            }
+        }
+
+        *value = min;
+
+        return STACK_OK;
+    }
+}
+
+StackResult peek(Stack *stack, int *value) {
+
+    if(stack->pos <= -1) return STACK_EMPTY;
+
+    else {
+        *value = stack->data[stack->pos];
+        
+        return STACK_OK;
+    }
 }
 
